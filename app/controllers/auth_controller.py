@@ -42,7 +42,6 @@ def login():
 
 @auth_bp.route('/profile')
 def profile():
-    # Replace with actual user session handling
     return render_template('profile.html')
 
 @auth_bp.route('/logout')
