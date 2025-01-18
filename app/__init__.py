@@ -13,7 +13,6 @@ def create_app():
     bcrypt.init_app(app)
     db.init_app(app)
 
-    # Register blueprints here
     from app.controllers.auth_controller import auth_bp
     app.register_blueprint(auth_bp)
 

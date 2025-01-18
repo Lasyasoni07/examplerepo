@@ -10,7 +10,7 @@ def home():
     return render_template('base.html')
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
-def signup():
+def sign_up():
     if request.method == 'POST':
         first_name = request.form['first_name']
         last_name = request.form['last_name']
@@ -40,10 +40,10 @@ def login():
 
     return render_template('login.html')
 
-@auth_bp.route('/profile')
-def profile():
-    # Replace with actual user session handling
-    return render_template('profile.html')
+@auth_bp.route('/view-profile')
+def view_profile():
+
+    return render_template('viewprofile.html')
 
 @auth_bp.route('/logout')
 def logout():
