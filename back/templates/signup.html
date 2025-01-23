@@ -1,28 +1,45 @@
 {% extends "base.html" %}
-{% block title %}sign up{% endblock %}
+{% block title %}Sign Up{% endblock %}
 {% block content %}
-<form method="POST">
+<form method="POST" novalidate>
+    {{ form.hidden_tag() }}
     <h3 align="center">Sign Up</h3>
     <div class="form-group">
-        <label for="email">Email Address</label>
-        <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" />
+        {{ form.first_name.label }}
+        {{ form.first_name(class="form-control") }}
+        {% for error in form.first_name.errors %}
+            <div class="text-danger">{{ error }}</div>
+        {% endfor %}
     </div>
     <div class="form-group">
-        <label for="firstName">First Name</label>
-        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter first name" />
+        {{ form.last_name.label }}
+        {{ form.last_name(class="form-control") }}
+        {% for error in form.last_name.errors %}
+            <div class="text-danger">{{ error }}</div>
+        {% endfor %}
     </div>
     <div class="form-group">
-        <label for="lastName">last Name</label>
-        <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Enter last name" />
+        {{ form.email.label }}
+        {{ form.email(class="form-control") }}
+        {% for error in form.email.errors %}
+            <div class="text-danger">{{ error }}</div>
+        {% endfor %}
     </div>
     <div class="form-group">
-        <label for="password1">Password</label>
-        <input type="text" class="form-control" id="password1" name="password1" placeholder="Enter password" />
+        {{ form.password1.label }}
+        {{ form.password1(class="form-control") }}
+        {% for error in form.password1.errors %}
+            <div class="text-danger">{{ error }}</div>
+        {% endfor %}
     </div>
     <div class="form-group">
-        <label for="password2">Password confirmation</label>
-        <input type="text" class="form-control" id="password2" name="password2" placeholder="Re-enter same password" />
+        {{ form.password2.label }}
+        {{ form.password2(class="form-control") }}
+        {% for error in form.password2.errors %}
+            <div class="text-danger">{{ error }}</div>
+        {% endfor %}
     </div>
-    <button type="submit" class="btn btn-primary">SUBMIT</button>
+    <button type="submit" class="btn btn-primary">Sign Up</button>
 </form>
-{% endblock%}
+
+{% endblock %}
