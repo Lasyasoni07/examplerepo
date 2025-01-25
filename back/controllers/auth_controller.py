@@ -14,11 +14,16 @@ def sign_up():
         password1 = form.password1.data
         password2 = form.password2.data
 
-        user = create_user(first_name, last_name, email, password1, password2)
+        if password1 != password2:
+            flash('Passwords do not match.', 'error')
+            return render_template('signup.html', form=form)
+
+        user = create_user(first_name, last_name, email, password1)
         if user:
             return redirect(url_for('auth.login'))
 
     return render_template('signup.html', form=form)
+
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
