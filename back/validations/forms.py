@@ -4,19 +4,21 @@ from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationE
 import re
 
 class RegistrationForm(FlaskForm):
-    def validate_name(self, field):
+    def validate_first_name(self, field):
         if not re.match(r"^[A-Za-z]+$", field.data):
-            raise ValidationError("This field can only contain alphabets (no numbers or special characters).")
+            raise ValidationError("First name can only contain alphabets (no numbers or special characters).")
+    
+    def validate_last_name(self, field):
+        if not re.match(r"^[A-Za-z]+$", field.data):
+            raise ValidationError("Last name can only contain alphabets (no numbers or special characters).")
 
     first_name = StringField('First Name', validators=[
         DataRequired(),
-        Length(min=2, message='First name must be at least 2 characters long.'),
-        validate_name
+        Length(min=2, message='First name must be at least 2 characters long.')
     ])
     last_name = StringField('Last Name', validators=[
         DataRequired(),
-        Length(min=2, message='Last name must be at least 2 characters long.'),
-        validate_name
+        Length(min=2, message='Last name must be at least 2 characters long.')
     ])
     email = EmailField('Email', validators=[
         DataRequired(),
@@ -37,3 +39,20 @@ class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
+
+
+class RequestResetForm(FlaskForm):
+    email = EmailField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+class ResetPasswordForm(FlaskForm):
+    password1 = PasswordField('New Password', validators=[
+        DataRequired(),
+        Length(min=8, message='Password must be at least 8 characters long.')
+    ])
+    password2 = PasswordField('Confirm New Password', validators=[
+        DataRequired(),
+        EqualTo('password1', message='Passwords must match.')
+    ])
+    submit = SubmitField('Reset Password')
+
