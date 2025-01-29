@@ -1,0 +1,103 @@
+<!-- templates/todo.html -->
+{% extends "base.html" %}
+{% block title %}TODO List{% endblock %}
+{% block content %}
+<h3>TODO List</h3>
+<form id="addTodoForm">
+    <div class="form-group">
+        <input type="text" id="taskInput" class="form-control" placeholder="Enter new task">
+    </div>
+    <button type="submit" class="btn btn-primary">Add Task</button>
+</form>
+
+<ul id="todoList" class="list-group mt-3"></ul>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchTodos();
+    
+        document.getElementById('addTodoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            addTodo();
+        });
+    });
+    
+    function fetchTodos() {
+        const token = localStorage.getItem('access_token');
+        console.log('Token:', token); // Check if the token is present
+        fetch('/todo', {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const todoList = document.getElementById('todoList');
+            todoList.innerHTML = '';
+            data.forEach(todo => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.innerHTML = `
+                    <input type="checkbox" class="mr-2" ${todo.completed ? 'checked' : ''} onchange="updateTodoStatus(${todo.id}, this.checked)">
+                    ${todo.task}
+                    <button class="btn btn-danger btn-sm float-right" onclick="deleteTodo(${todo.id})">Delete</button>
+                `;
+                todoList.appendChild(li);
+            });
+        });
+    }
+    
+    function addTodo() {
+        const taskInput = document.getElementById('taskInput');
+        const task = taskInput.value.trim();
+        if (!task) return;
+    
+        const token = localStorage.getItem('access_token');
+        fetch('/todo', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({ task: task })
+        })
+        .then(response => response.json())
+        .then(() => {
+            taskInput.value = '';
+            fetchTodos();
+        });
+    }
+    
+    function updateTodoStatus(id, completed) {
+        const token = localStorage.getItem('access_token');
+        fetch(`/todo/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({ completed: completed })
+        })
+        .then(response => response.json())
+        .then(() => {
+            fetchTodos();
+        });
+    }
+    
+    function deleteTodo(id) {
+        const token = localStorage.getItem('access_token');
+        fetch(`/todo/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        })
+        .then(response => response.json())
+        .then(() => {
+            fetchTodos();
+        });
+    }
+    </script>
+    
+    
+{% endblock %}
