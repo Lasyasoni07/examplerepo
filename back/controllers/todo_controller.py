@@ -1,4 +1,3 @@
-# back/controllers/todo_controller.py
 from flask import Blueprint, request, jsonify, render_template
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from back.models.todo_model import TodoItem
