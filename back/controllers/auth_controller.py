@@ -103,5 +103,4 @@ def send_reset_email(to_email, reset_url):
 @auth_bp.route('/verify-token', methods=['POST'])
 @jwt_required()
 def verify_token():
-    # If jwt_required passes, the token is valid
     return jsonify({'valid': True}), 200
