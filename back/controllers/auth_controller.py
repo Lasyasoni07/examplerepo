@@ -102,6 +102,6 @@ def send_reset_email(to_email, reset_url):
     mail.send(msg)
 
 @auth_bp.route('/verify-token', methods=['POST'])
-@csrf.exempt  # Exempt this route from CSRF protection
+@csrf.exempt
 def verify_token():
     return jsonify({'valid': True}), 200

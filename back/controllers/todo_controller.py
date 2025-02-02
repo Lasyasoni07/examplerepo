@@ -28,7 +28,7 @@ def get_todos():
 
 
 @todo_bp.route('/todo/<int:id>', methods=['PUT'])
-@csrf.exempt  # Exempt this route if using Option 1 from earlier
+@csrf.exempt 
 @jwt_required()
 def update_todo_status(id):
     user_id = get_jwt_identity()
@@ -41,7 +41,7 @@ def update_todo_status(id):
     return jsonify({'message': 'Todo item updated successfully'}), 200
 
 @todo_bp.route('/todo/<int:id>', methods=['DELETE'])
-@csrf.exempt  # Exempt this route as well
+@csrf.exempt
 @jwt_required()
 def delete_todo(id):
     user_id = get_jwt_identity()
