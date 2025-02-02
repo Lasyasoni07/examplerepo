@@ -9,6 +9,7 @@ from back import mail, db
 from back.models.user_model import User
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required, get_jwt_identity, verify_jwt_in_request, JWTManager
+from back import csrf
 
 
 auth_bp = Blueprint('auth', __name__)
@@ -101,6 +102,6 @@ def send_reset_email(to_email, reset_url):
     mail.send(msg)
 
 @auth_bp.route('/verify-token', methods=['POST'])
-@jwt_required()
+@csrf.exempt  # Exempt this route from CSRF protection
 def verify_token():
     return jsonify({'valid': True}), 200

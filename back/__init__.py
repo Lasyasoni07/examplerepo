@@ -36,7 +36,7 @@ def create_app():
     bcrypt.init_app(app)
     db.init_app(app)
     mail.init_app(app)
-    csrf = CSRFProtect(app)
+    csrf.init_app(app)
 
     from back.controllers.auth_controller import auth_bp
     app.register_blueprint(auth_bp)
