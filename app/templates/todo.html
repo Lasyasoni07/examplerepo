@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TODO List</title>
+</head>
+<body>
+    <h3>TODO List</h3>
+    <form id="addTodoForm">
+        <input type="text" id="taskInput" placeholder="Enter new task">
+        <button type="submit">Add Task</button>
+    </form>
+    <ul id="todoList"></ul>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('access_token');
+            const userRole = localStorage.getItem('user_role');
+
+            if (!token || !userRole) {
+                alert('Please log in to access this page.');
+                window.location.href = '/login';
+                return;
+            }
+
+            console.log('User Role:', userRole); 
+            fetchTodos();
+
+            document.getElementById('addTodoForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addTodo();
+            });
+        });
+
+        function fetchTodos() {
+            const token = localStorage.getItem('access_token');
+            const userRole = localStorage.getItem('user_role');  
+        
+            console.log('User Role:', userRole);  
+        
+            fetch('/todo', {
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Fetched todos:', data); 
+                const todoList = document.getElementById('todoList');
+                todoList.innerHTML = '';
+                data.forEach(todo => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <div>
+                            <input type="checkbox" ${todo.completed ? 'checked' : ''} onchange="updateTodoStatus(${todo.id}, this.checked)">
+                            <span>${todo.task}</span>
+                            <button onclick="updateTodoTask(${todo.id})">Update</button>
+                            ${userRole === 'admin' ? `<button onclick="deleteTodoItem(${todo.id})">Delete</button>` : ''}
+                        </div>
+                    `;
+                    todoList.appendChild(li);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to fetch todos');
+            });
+        }
+        
+
+        function addTodo() {
+            const taskInput = document.getElementById('taskInput');
+            const task = taskInput.value.trim();
+            if (!task) return;
+
+            const token = localStorage.getItem('access_token');
+            fetch('/todo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ task: task })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Failed to add todo', response.statusText);
+                    throw new Error('Failed to add todo');
+                }
+                return response.json();
+            })
+            .then(() => {
+                taskInput.value = '';
+                fetchTodos();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to add todo');
+            });
+        }
+
+        function updateTodoStatus(id, completed) {
+            const token = localStorage.getItem('access_token');
+            fetch(`/todo/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ completed: completed })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to update todo status');
+                return response.json();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update todo');
+            });
+        }
+
+        function deleteTodoItem(id) {
+            const token = localStorage.getItem('access_token');
+            fetch(`/todo/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to delete todo');
+                return response.json();
+            })
+            .then(() => {
+                fetchTodos();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to delete todo');
+            });
+        }
+
+        function updateTodoTask(id) {
+            const newTask = prompt("Enter new task:");
+            if (!newTask) return;
+
+            const token = localStorage.getItem('access_token');
+            fetch(`/todo/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ task: newTask })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to update todo task');
+                return response.json();
+            })
+            .then(() => {
+                fetchTodos();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update todo');
+            });
+        }
+    </script>
+</body>
+</html>
