@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Your Gallery{% endblock %}
+{% block content %}
+<h2>Your Images</h2>
+{% for image in images %}
+    <div>
+        <img src="{{ url_for('image.uploaded_file', filename=image.filename) }}" alt="Image" width="200">
+        <form action="{{ url_for('image.delete', image_id=image.id) }}" method="post">
+            <input type="submit" value="Delete">
+        </form>
+    </div>
+{% else %}
+    <p>No images uploaded yet.</p>
+{% endfor %}
+{% endblock %}
