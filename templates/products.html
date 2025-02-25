@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Product Catalog</h2>
+<a href="/cart/items" class="cart-button">View Cart</a>
+<ul>
+    {% for product in products %}
+    <li>
+        <h3>{{ product.name }} ({{ product.inventory }} in stock)</h3>
+        <p>{{ product.description }}</p>
+        <p>Price: ${{ product.price }}</p>
+        <form method="post" action="/cart/add">
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+            <label for="quantity_{{ product.id }}">Quantity:</label>
+            <input type="number" name="quantity" id="quantity_{{ product.id }}" value="1" min="1" max="{{ product.inventory }}">
+            <button type="submit">Add to Cart</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+
+<h3>Add a New Product</h3>
+<form method="post" action="/products/add">
+    <label for="name">Product Name:</label>
+    <input type="text" name="name" id="name" required>
+    
+    <label for="description">Description:</label>
+    <textarea name="description" id="description" required></textarea>
+    
+    <label for="price">Price:</label>
+    <input type="number" name="price" id="price" step="0.01" required>
+    
+    <label for="category">Category:</label>
+    <input type="text" name="category" id="category" required>
+    
+    <label for="inventory">Inventory:</label>
+    <input type="number" name="inventory" id="inventory" required min="0">
+    
+    <button type="submit">Add Product</button>
+</form>
+{% endblock %}

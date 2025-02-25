@@ -1,0 +1,32 @@
+/* Navigation Styles */
+nav {
+    background-color: #222;
+    padding: 1em;
+    text-align: center;
+}
+
+nav a {
+    color: #fff;
+    margin: 0 1em;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Cart Button Styles */
+.cart-button {
+    display: inline-block;
+    margin-bottom: 1em;
+    padding: 0.5em 1em;
+    background-color: #ff9800;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.cart-button:hover {
+    background-color: #e68a00;
+}
