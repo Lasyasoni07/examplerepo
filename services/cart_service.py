@@ -11,10 +11,8 @@ def add_to_cart(db: Session, user_id: int, cart_item: CartItemCreate):
     if product.inventory < cart_item.quantity:
         raise HTTPException(status_code=400, detail="Not enough inventory available")
 
-    # Deduct inventory
     product.inventory -= cart_item.quantity
 
-    # Check if item already in cart
     existing_cart_item = db.query(Cart).filter(Cart.user_id == user_id, Cart.product_id == cart_item.product_id).first()
     if existing_cart_item:
         existing_cart_item.quantity += cart_item.quantity

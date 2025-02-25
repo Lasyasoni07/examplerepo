@@ -19,7 +19,6 @@
             <td>{{ item.quantity }}</td>
             <td>${{ item.product.price * item.quantity }}</td>
         </tr>
-        <!-- Inside the for loop for cart items -->
         <td>
             <form method="post" action="/cart/remove">
                 <input type="hidden" name="cart_item_id" value="{{ item.id }}">

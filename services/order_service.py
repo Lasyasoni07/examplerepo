@@ -11,11 +11,9 @@ def create_order(db: Session, user_id: int):
 
     total_amount = sum(item.product.price * item.quantity for item in cart_items)
 
-    # Create order
     order = Order(user_id=user_id, total_amount=total_amount)
     db.add(order)
 
-    # Clear the cart
     for item in cart_items:
         db.delete(item)
 
