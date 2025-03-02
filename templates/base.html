@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flask Chat App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Use the latest 4.x version -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js" integrity="sha384-13u+Y43BIjH3hrF+K7kbEjvwjN5lDdvKebpxkX1i0loaUyLBYmxj3HVmplQeVnmK" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="flashes">
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

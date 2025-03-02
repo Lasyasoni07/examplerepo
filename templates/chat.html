@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Room: {{ room }}</h2>
+<div id="chat-window">
+    <div id="output">
+        {% for message in messages %}
+            <p><strong>{{ message.username }}:</strong> {{ message.content }}</p>
+        {% endfor %}
+    </div>
+</div>
+<input type="text" id="message" placeholder="Type your message..." autocomplete="off">
+<button id="send">Send</button>
+<a href="{{ url_for('chat.chat_rooms') }}">Back to Rooms</a>
+<script type="text/javascript">
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    var room = "{{ room }}";
+    var username = "{{ username }}";
+
+    socket.on('connect', function() {
+        socket.emit('join_room', {'room': room, 'username': username});
+    });
+
+    document.getElementById('send').onclick = function() {
+        var message = document.getElementById('message').value;
+        if(message) {
+            socket.emit('send_message', {'room': room, 'message': message, 'username': username});
+            document.getElementById('message').value = '';
+        }
+    };
+
+    socket.on('receive_message', function(data) {
+        var output = document.getElementById('output');
+        output.innerHTML += '<p><strong>' + data.username + ':</strong> ' + data.message + '</p>';
+    });
+
+    socket.on('status', function(data) {
+        var output = document.getElementById('output');
+        output.innerHTML += '<p><em>' + data.msg + '</em></p>';
+    });
+
+    window.onbeforeunload = function() {
+        socket.emit('leave_room', {'room': room, 'username': username});
+    };
+</script>
+{% endblock %}

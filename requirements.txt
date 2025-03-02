@@ -1,0 +1,7 @@
+Flask
+Flask-SocketIO
+Flask-Login
+Flask-WTF
+WTForms
+Flask_SQLAlchemy
+eventlet
