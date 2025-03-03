@@ -7,7 +7,6 @@ auth = Blueprint('auth', __name__)
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
-    # Login logic
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -33,7 +32,6 @@ def register():
             flash('Username already exists.')
             return redirect(url_for('auth.register'))
 
-        # Ensure the hashing method is correct
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 
         new_user = User(

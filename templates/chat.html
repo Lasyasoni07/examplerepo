@@ -17,30 +17,33 @@
     var room = "{{ room }}";
     var username = "{{ username }}";
 
-    socket.on('connect', function() {
-        socket.emit('join_room', {'room': room, 'username': username});
-    });
+socket.on('connect', function() {
+    console.log('Connected to server, joining room:', room);
+    socket.emit('join_room', {'room': room, 'username': username});
+});
 
-    document.getElementById('send').onclick = function() {
-        var message = document.getElementById('message').value;
-        if(message) {
-            socket.emit('send_message', {'room': room, 'message': message, 'username': username});
-            document.getElementById('message').value = '';
-        }
-    };
+document.getElementById('send').onclick = function() {
+    var message = document.getElementById('message').value;
+    if (message) {
+        console.log('Sending message:', message);
+        socket.emit('send_message', {'room': room, 'message': message, 'username': username});
+        document.getElementById('message').value = '';
+    }
+};
 
-    socket.on('receive_message', function(data) {
-        var output = document.getElementById('output');
-        output.innerHTML += '<p><strong>' + data.username + ':</strong> ' + data.message + '</p>';
-    });
+socket.on('receive_message', function(data) {
+    console.log('Received message:', data);
+    var output = document.getElementById('output');
+    output.innerHTML += '<p><strong>' + data.username + ':</strong> ' + data.message + '</p>';
+    // Auto-scroll to the bottom
+    var chatWindow = document.getElementById('chat-window');
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+});
 
-    socket.on('status', function(data) {
-        var output = document.getElementById('output');
-        output.innerHTML += '<p><em>' + data.msg + '</em></p>';
-    });
+socket.on('status', function(data) {
+    var output = document.getElementById('output');
+    output.innerHTML += '<p><em>' + data.msg + '</em></p>';
+});
 
-    window.onbeforeunload = function() {
-        socket.emit('leave_room', {'room': room, 'username': username});
-    };
 </script>
 {% endblock %}
