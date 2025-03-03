@@ -16,7 +16,7 @@ def login():
 
         if user and check_password_hash(user.password, password):
             login_user(user, remember=remember)
-            return redirect(url_for('chat.chat_rooms'))
+            return redirect(url_for('chat.user_list'))
         else:
             flash('Invalid username or password.')
 

@@ -1,60 +1,65 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, request
 from flask_login import login_required, current_user
-from models.models import Message, db
+from models.models import Message, User, db
 from flask_socketio import emit, join_room, leave_room
+from socketio_instance import socketio
 
 chat = Blueprint('chat', __name__)
 
 @chat.route('/')
 @login_required
-def chat_rooms():
-    return render_template('index.html', username=current_user.username)
+def user_list():
+    users = User.query.filter(User.id != current_user.id).all()
+    return render_template('user_list.html', username=current_user.username, users=users)
 
-@chat.route('/chat/<room>')
+@chat.route('/chat/<int:recipient_id>')
 @login_required
-def chat_room(room):
-    messages = Message.query.filter_by(room=room).order_by(Message.timestamp).all()
-    return render_template('chat.html', username=current_user.username, room=room, messages=messages)
+def chat_with_user(recipient_id):
+    recipient = User.query.get_or_404(recipient_id)
+    messages = Message.query.filter(
+        ((Message.sender_id == current_user.id) & (Message.recipient_id == recipient.id)) |
+        ((Message.sender_id == recipient.id) & (Message.recipient_id == current_user.id))
+    ).order_by(Message.timestamp).all()
 
-from app import socketio
+    room = get_private_room(current_user.id, recipient.id)
 
-@socketio.on('join_room')
-def handle_join_room(data):
-    print(f"{data['username']} joining room {data['room']}")
-    join_room(data['room'])
-    emit('status', {
-        'msg': f"{data['username']} has joined the room."
-    }, room=data['room'])
+    return render_template('chat.html', username=current_user.username, recipient=recipient, room=room, messages=messages)
 
+def get_private_room(user1_id, user2_id):
+    return f'private_{min(user1_id, user2_id)}_{max(user1_id, user2_id)}'
 
-@socketio.on('send_message')
-def handle_send_message(data):
+@socketio.on('join_private_room')
+def handle_join_private_room(data):
+    room = data['room']
+    join_room(room)
+    print(f"User {data['username']} joined private room {room}")
+
+@socketio.on('send_private_message')
+def handle_send_private_message(data):
+    recipient_id = data['recipient_id']
+    room = data['room']
     try:
-        print(f"Received message data: {data}")
         if current_user.is_authenticated:
-            print(f"User authenticated: {current_user.username}")
             msg = Message(
-                room=data['room'],
-                user_id=current_user.id,
-                username=current_user.username,
+                sender_id=current_user.id,
+                recipient_id=recipient_id,
                 content=data['message']
             )
             db.session.add(msg)
             db.session.commit()
-            print("Message saved to database")
-            emit('receive_message', {
-                'username': data['username'],
+
+            emit('receive_private_message', {
+                'username': current_user.username,
                 'message': data['message']
-            }, room=data['room'])
-            print("Message emitted to room")
+            }, room=room)
+            print(f"Message from {current_user.username} to {recipient_id}: {data['message']}")
         else:
             print("User not authenticated")
     except Exception as e:
-        print(f"Error in handle_send_message: {e}")
+        print(f"Error in handle_send_private_message: {e}")
 
-@socketio.on('leave_room')
-def handle_leave_room(data):
-    leave_room(data['room'])
-    emit('status', {
-        'msg': f"{data['username']} has left the room."
-    }, room=data['room'])
+@socketio.on('leave_private_room')
+def handle_leave_private_room(data):
+    room = data['room']
+    leave_room(room)
+    print(f"User {data['username']} left private room {room}")

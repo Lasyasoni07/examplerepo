@@ -1,49 +1,49 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Room: {{ room }}</h2>
+<h2>Chat with {{ recipient.username }}</h2>
 <div id="chat-window">
     <div id="output">
         {% for message in messages %}
-            <p><strong>{{ message.username }}:</strong> {{ message.content }}</p>
+            {% if message.sender_id == current_user.id %}
+                <p><strong>You:</strong> {{ message.content }}</p>
+            {% else %}
+                <p><strong>{{ recipient.username }}:</strong> {{ message.content }}</p>
+            {% endif %}
         {% endfor %}
     </div>
 </div>
 <input type="text" id="message" placeholder="Type your message..." autocomplete="off">
 <button id="send">Send</button>
-<a href="{{ url_for('chat.chat_rooms') }}">Back to Rooms</a>
+<a href="{{ url_for('chat.user_list') }}">Back to Users</a>
 <script type="text/javascript">
     var socket = io.connect('http://' + document.domain + ':' + location.port);
     var room = "{{ room }}";
     var username = "{{ username }}";
+    var recipientId = "{{ recipient.id }}";
 
-socket.on('connect', function() {
-    console.log('Connected to server, joining room:', room);
-    socket.emit('join_room', {'room': room, 'username': username});
-});
+    socket.on('connect', function() {
+        socket.emit('join_private_room', {'room': room, 'username': username});
+    });
 
-document.getElementById('send').onclick = function() {
-    var message = document.getElementById('message').value;
-    if (message) {
-        console.log('Sending message:', message);
-        socket.emit('send_message', {'room': room, 'message': message, 'username': username});
-        document.getElementById('message').value = '';
-    }
-};
+    document.getElementById('send').onclick = function() {
+        var message = document.getElementById('message').value;
+        if (message) {
+            socket.emit('send_private_message', {
+                'room': room,
+                'message': message,
+                'username': username,
+                'recipient_id': recipientId
+            });
+            document.getElementById('message').value = '';
+        }
+    };
 
-socket.on('receive_message', function(data) {
-    console.log('Received message:', data);
-    var output = document.getElementById('output');
-    output.innerHTML += '<p><strong>' + data.username + ':</strong> ' + data.message + '</p>';
-    // Auto-scroll to the bottom
-    var chatWindow = document.getElementById('chat-window');
-    chatWindow.scrollTop = chatWindow.scrollHeight;
-});
-
-socket.on('status', function(data) {
-    var output = document.getElementById('output');
-    output.innerHTML += '<p><em>' + data.msg + '</em></p>';
-});
-
+    socket.on('receive_private_message', function(data) {
+        var output = document.getElementById('output');
+        output.innerHTML += '<p><strong>' + data.username + ':</strong> ' + data.message + '</p>';
+        var chatWindow = document.getElementById('chat-window');
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    });
 </script>
 {% endblock %}
