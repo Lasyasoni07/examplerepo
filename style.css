@@ -6,6 +6,7 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f5f5f5;
     overflow-y: scroll;
+    padding-top: 48px;
 }
 .container {
     display: flex;
@@ -18,7 +19,7 @@ body {
     border-radius: 8px;
 }
 .left {
-    width: 18%; /* Decrease the percentage to make it narrower */
+    width: 18%; 
     background-color: #f5f5f5;
     height: 100vh;
 }
@@ -27,21 +28,26 @@ body {
     width: 60%;
 }
 .right {
-    max-height: 85vh; /* Limiting height to enable scrolling */
+    max-height: 85vh; 
     overflow-y: auto;
     background-color: #f5f5f5;
-    width: 25%;
+    width: 30%;
 }
 
 /* Navbar Styling */
 .navbar {
+    position: fixed; /* Makes the navbar stay at the top */
+    top: 0;
+    left: 0;
+    right: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 10px 20px;
     background-color: white;
     border-bottom: 1px solid #ddd;
-    height: 43px;
+    height: 50px;
+    z-index: 1000; /* Ensures it stays above other content */
 }
 
 /* Navbar Inner Container */
@@ -49,7 +55,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 90%; /* Adjust this value to control left & right margin */
+    width: 90%; 
     margin: auto;
 }
 
@@ -68,7 +74,7 @@ body {
 }
 
 .search-bar input {
-    width: 50%; /* Reduced width */
+    width: 50%; 
     padding: 8px 12px;
     padding-right: 100px; /* Space for 'Powered by Algolia' */
     border: 1px solid #ddd;
@@ -80,12 +86,14 @@ body {
 
 .login_color{
     color: black;
+    padding: 10px;
+    border-radius: 5px;
 }
 
 /* 'Powered by Algolia' Text Styling */
 .powered-by {
     position: absolute;
-    right: 500px;  /*Adjusted for better placement */
+    right: 500px; 
     font-size: 12px;
     color: gray;
     pointer-events: none;
@@ -100,6 +108,8 @@ body {
     display: flex;
     align-items: center;
     gap: 15px;
+    padding: 5px 10px; /* Adding padding by default */
+    border-radius: 4px;
 }
 
 .auth-buttons a {
@@ -108,11 +118,27 @@ body {
 }
 
 .create-account {
-    padding: 10px 16px;
+    padding: 8px 16px;
     border: 1px solid blue;
     border-radius: 6px;
     color: blue;
 }
+
+/* Log in Button Hover Effect */
+.auth-buttons .login_color:hover {
+    background-color: lightblue; /* Light blue background */
+    color: blue; /* Text color */
+    text-decoration: underline; /* Underline text */
+}
+
+/* Create Account Button Hover Effect */
+.auth-buttons .create-account:hover {
+    background-color: blue; /* Thick blue background */
+    color: white; /* White text */
+    text-decoration: underline; /* Underline text */
+    border: 1px solid blue; /* Keep the border */
+}
+
 
 /* left section */
 .left-section {
@@ -127,46 +153,62 @@ body {
 }
 
 .left-section button {
+    font-size: 16px;
     margin-top: 10px;
-    padding: 10px 20px;
+    padding: 12px 20px;
     border: 1px solid #3b49df;
     border-radius: 5px;
     background-color: white;
     color: #3b49df;
     cursor: pointer;
     width: 90%;
+    transition: all 0.3s; /* Smooth transition */
+}
+.left-section button:hover {
+    background-color: #3b49df; /* Thick blue background */
+    color: white; /* White text */
+    text-decoration: underline;
 }
 .left-section a {
     display: block;
     margin-top: 5px;
     text-decoration: none;
     color: black;
+    padding: 8px;
+    border-radius: 5px;
+    transition: all 0.3s; /* Smooth transition */
+}
+.left-section a:hover {
+    background-color: #e0ebff; /* Light blue background */
+    color: #3b49df; /* Light blue text */
+    text-decoration: underline;
 }
 .menu-item {
     margin: 1px 0;
     display: flex;
     align-items: center;
     color:black;
-    margin-left: 22px;
+    margin-left: 8px;
 }
 .menu-item img {
     margin-right: 8px;
 }
 
+
 /* middle section */
 .tabs {
     display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
-}
-.tab {
-    font-weight: bold;
-    cursor: pointer;
+    font-size: 20px;
 }
 
-.tab2 {
+.tabs p:hover {
+    background-color: white;
+    color: blue;
+}
+.tab {
     cursor: pointer;
-    color: grey;
+    padding: 10px;
+    border-radius: 10px;
 }
 
 .post-card {
@@ -191,6 +233,17 @@ body {
     justify-content: space-between;
     margin-top: 10px;
 }
+.card-in-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    margin-left: 10px;
+}
+
+.card-margin {
+    margin-left: 50px;
+} 
 
 /* rightside section */
 
@@ -253,4 +306,64 @@ body {
     justify-content: space-between;
     margin-top: 10px;
     font-size: 14px;
+}
+
+/* Hide the hamburger menu on desktop */
+.hamburger-menu {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 10px;
+}
+
+/* Style for mobile sidebar (hidden by default) */
+.mobile-sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 80%;
+    height: 100%;
+    background-color: white;
+    transition: left 0.3s;
+    z-index: 1000;
+    overflow-y: auto; 
+    scrollbar-width: thin; 
+}
+
+.mobile-sidebar.active {
+    left: 0;
+}
+
+/* Close Button Styling */
+.close-btn {
+    text-align: right;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+    .hamburger-menu {
+        display: block; /* Show hamburger menu on mobile */
+    }
+    .left {
+        display: none; /* Hide left section on mobile */
+    }
+}
+@media screen and (max-width: 768px) {
+    .search-bar {
+        display: none; /* Hide search bar in navbar */
+    }
+}
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column; /* Stack elements vertically */
+        padding: 10px;
+        margin: 0;
+    }
+    .middle, .right {
+        width: 100%; /* Make both sections full width */
+    }
 }

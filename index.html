@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEV-like Navbar</title>
+    <title>DEV-like</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- Navbar Container -->
     <div class="navbar">
+        <div class="hamburger-menu" onclick="toggleMenu()">☰</div>
         <div class="navbar-inner">
             <div class="logo">
                 <img src="dev_logo.png" alt="Logo">
@@ -27,6 +28,45 @@
     
 
     <div class="container">
+        <div class="mobile-sidebar">
+            <div class="close-btn" id="closeBtn">✖</div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search...">
+                <span class="powered-by">Powered by Algolia</span>
+            </div>
+            <div class="mobile-menu">
+                <div class="left-section left-section-top">
+                    <h2>DEV Community is a community of 2,912,681 amazing developers</h2>
+                    <p>We're a place where coders share, stay up-to-date and grow their careers.</p>
+                    <button>Create account</button>
+                    <a href="#">Log in</a>
+                </div>
+                <div class="left-section">
+                    <a href="#" class="menu-item">🏠 Home</a>
+                    <a href="#" class="menu-item">➕ DEV++</a>
+                    <a href="#" class="menu-item">🎙 Podcasts</a>
+                    <a href="#" class="menu-item">📹 Videos</a>
+                    <a href="#" class="menu-item">🏷 Tags</a>
+                    <a href="#" class="menu-item">💡 DEV Help</a>
+                    <a href="#" class="menu-item">🛒 Forem Shop</a>
+                    <a href="#" class="menu-item">❤️ Advertise on DEV</a>
+                    <a href="#" class="menu-item">🏆 DEV Challenges</a>
+                    <a href="#" class="menu-item">✨ DEV Showcase</a>
+                    <a href="#" class="menu-item">😎 About</a>
+                    <a href="#" class="menu-item">🔍 Contact</a>
+                    <a href="#" class="menu-item">🦖 Free Postgres Database</a>
+                    <a href="#" class="menu-item highlighted">🤔 Software comparisons</a>
+                </div>
+                <!-- Other Section -->
+                <div class="menu-section">
+                    <h3>Other</h3>
+                    <a href="#" class="menu-item">👍 Code of Conduct</a>
+                    <a href="#" class="menu-item">👓 Privacy Policy</a>
+                    <a href="#" class="menu-item">👀 Terms of use</a>
+                </div>
+            </div>
+        </div>
+        
         <div class="left">
             <!-- Top Section -->
             <div class="left-section left-section-top">
@@ -45,15 +85,47 @@
                 <a href="#" class="menu-item">🏷 Tags</a><br>
                 <a href="#" class="menu-item">💡 DEV Help</a><br>
                 <a href="#" class="menu-item">🛒 Forem Shop</a><br>
-                <a href="#" class="menu-item">❤️ Advertise on DEV</a>
+                <a href="#" class="menu-item">❤️ Advertise on DEV</a><br>
+                <a href="#" class="menu-item">🏆 DEV Challenges</a><br>
+                <a href="#" class="menu-item">✨ DEV Showcase</a><br>
+                <a href="#" class="menu-item">😎 About</a><br>
+                <a href="#" class="menu-item">🔍 Contact</a><br>
+                <a href="#" class="menu-item">🦖 Free Postgres Database</a><br>
+                <a href="#" class="menu-item">🤔 Software comparisons</a><br>
+                <div>
+                    <h3>Other</h3>
+                    <a href="#" class="menu-item">👍 Code of Conduct</a><br>
+                    <a href="#" class="menu-item">👓 Privacy Policy</a><br>
+                    <a href="#" class="menu-item">👀 Terms of use</a><br>
+                </div>
+            </div>
+
+            <!-- Social Links -->
+            <div>
+                <span>❌</span>
+                <span>📘</span>
+                <span>🐱</span>
+                <span>📸</span>
+                <span>📹</span>
+                <span>🐘</span>
+                <span>🦋</span>
+            </div>
+
+            <!-- Popular Tags -->
+            <div class="popular-tags">
+                <h3>Popular Tags</h3>
+                <a href="#">#webdev</a><br>
+                <a href="#">#programming</a><br>
+                <a href="#">#machinelearning</a><br>
             </div>
         </div>
+        <!-- middle Section -->
         <div class="middle">
             <!-- Tabs -->
             <div class="tabs">
-                <div class="tab">Relevant</div>
-                <div class="tab2">Latest</div>
-                <div class="tab2">Top</div>
+                <p class="tab"><strong>Relevant</strong></p>
+                <p class="tab">Latest</p>
+                <p class="tab">Top</p>
             </div>
 
             <!-- Post Card -->
@@ -63,13 +135,34 @@
                 </div>
                 <div class="post-header">
                     <img src=dev_logo.png alt="DEV logo">
-                    <strong>dev.to staff</strong> for The DEV Team - Mar 12
+                    <strong>dev.to staff </strong> for The DEV Team - Mar 12
                 </div>
-                <h3>Join the KendoReact Free Components Challenge: $5,000 in Prizes!</h3>
-                <div class="post-tags">#kendoreactchallenge #react #devchallenge #webdev</div>
-                <div class="post-actions">
-                    <div>❤️ 🎉 🔖 🦄 117 reactions 💬 24 comments</div>
-                    <div>3 min read</div>
+                <div class="card-in-card">
+                    <h1>Join the KendoReact Free Components Challenge: $5,000 in Prizes!</h1>
+                    <div class="post-tags">#kendoreactchallenge #react #devchallenge #webdev</div>
+                    <div class="post-actions">
+                        <div>❤️ 🎉 🔖 🦄 117 reactions 💬 24 comments</div>
+                        <div>3 min read</div>
+                    </div>
+                </div>    
+            </div>
+            <div class="post-container">
+                <div class="post-header">
+                    <img src=user2.png alt="User Image">
+                    <div>
+                        <strong>Faceplugin</strong><br>
+                        <small>Mar 14</small>
+                    </div>
+                </div>
+                <div class="card-margin">
+                    <div class="post-content">
+                        <h2>Why 3D Passive Liveness Detection is Essential for Secure Authentication</h2>
+                        <p class="post-tags">#programming #ai #machinelearning #datascience</p>
+                    </div>
+                    <div class="post-footer">
+                        <div>❤️🐦🎉🔥 43 reactions  💬 Add Comment</div>
+                        <div>2 min read</div>
+                    </div>
                 </div>
             </div>
             <div class="post-container">
@@ -80,13 +173,15 @@
                         <small>Mar 14</small>
                     </div>
                 </div>
-                <div class="post-content">
-                    <h2>Why 3D Passive Liveness Detection is Essential for Secure Authentication</h2>
-                    <p>#programming #ai #machinelearning #datascience</p>
-                </div>
-                <div class="post-footer">
-                    <div>❤️🐦🎉🔥 43 reactions Add Comment</div>
-                    <div>2 min read</div>
+                <div class="card-margin">
+                    <div class="post-content">
+                        <h2>Why 3D Passive Liveness Detection is Essential for Secure Authentication</h2>
+                        <p class="post-tags">#programming #ai #machinelearning #datascience</p>
+                    </div>
+                    <div class="post-footer">
+                        <div>❤️🐦🎉🔥 43 reactions  💬 Add Comment</div>
+                        <div>2 min read</div>
+                    </div>
                 </div>
             </div>
             <div class="post-container">
@@ -97,13 +192,15 @@
                         <small>Mar 14</small>
                     </div>
                 </div>
-                <div class="post-content">
-                    <h2>Why 3D Passive Liveness Detection is Essential for Secure Authentication</h2>
-                    <p>#programming #ai #machinelearning #datascience</p>
-                </div>
-                <div class="post-footer">
-                    <div>❤️🐦🎉🔥 43 reactions Add Comment</div>
-                    <div>2 min read</div>
+                <div class="card-margin">
+                    <div class="post-content">
+                        <h2>Why 3D Passive Liveness Detection is Essential for Secure Authentication</h2>
+                        <p class="post-tags">#programming #ai #machinelearning #datascience</p>
+                    </div>
+                    <div class="post-footer">
+                        <div>❤️🐦🎉🔥 43 reactions  💬 Add Comment</div>
+                        <div>2 min read</div>
+                    </div>
                 </div>
             </div>
             <div class="post-container">
@@ -114,13 +211,53 @@
                         <small>Mar 14</small>
                     </div>
                 </div>
-                <div class="post-content">
-                    <h2>Why 3D Passive Liveness Detection is Essential for Secure Authentication</h2>
-                    <p>#programming #ai #machinelearning #datascience</p>
+                <div class="card-margin">
+                    <div class="post-content">
+                        <h2>Why 3D Passive Liveness Detection is Essential for Secure Authentication</h2>
+                        <p class="post-tags">#programming #ai #machinelearning #datascience</p>
+                    </div>
+                    <div class="post-footer">
+                        <div>❤️🐦🎉🔥 43 reactions  💬 Add Comment</div>
+                        <div>2 min read</div>
+                    </div>
                 </div>
-                <div class="post-footer">
-                    <div>❤️🐦🎉🔥 43 reactions Add Comment</div>
-                    <div>2 min read</div>
+            </div>
+            <div class="post-container">
+                <div class="post-header">
+                    <img src=user2.png alt="User Image">
+                    <div>
+                        <strong>Faceplugin</strong><br>
+                        <small>Mar 14</small>
+                    </div>
+                </div>
+                <div class="card-margin">
+                    <div class="post-content">
+                        <h2>Why 3D Passive Liveness Detection is Essential for Secure Authentication</h2>
+                        <p class="post-tags">#programming #ai #machinelearning #datascience</p>
+                    </div>
+                    <div class="post-footer">
+                        <div>❤️🐦🎉🔥 43 reactions  💬 Add Comment</div>
+                        <div>2 min read</div>
+                    </div>
+                </div>
+            </div>
+            <div class="post-container">
+                <div class="post-header">
+                    <img src=user2.png alt="User Image">
+                    <div>
+                        <strong>Faceplugin</strong><br>
+                        <small>Mar 14</small>
+                    </div>
+                </div>
+                <div class="card-margin">
+                    <div class="post-content">
+                        <h2>Why 3D Passive Liveness Detection is Essential for Secure Authentication</h2>
+                        <p class="post-tags">#programming #ai #machinelearning #datascience</p>
+                    </div>
+                    <div class="post-footer">
+                        <div>❤️🐦🎉🔥 43 reactions  💬 Add Comment</div>
+                        <div>2 min read</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -155,5 +292,21 @@
             </div>
         </div>
     </div>
+    <script>
+        function toggleMenu() {
+            const mobileSidebar = document.querySelector(".mobile-sidebar");
+            mobileSidebar.classList.toggle("active");
+        }
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            const closeBtn = document.getElementById('closeBtn');
+            const mobileSidebar = document.querySelector(".mobile-sidebar");
+        
+            closeBtn.addEventListener('click', function() {
+                mobileSidebar.classList.remove("active");
+            });
+        });       
+    </script>
+        
 </body>
 </html>
