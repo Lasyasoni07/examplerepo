@@ -1,12 +1,11 @@
 
 body {
     margin: 0;
-    padding: 0;
+    padding: 0; 
     box-sizing: border-box;
     font-family: Arial, sans-serif;
     background-color: #f5f5f5;
     overflow-y: scroll;
-    padding-top: 48px;
 
 }
 .container {
@@ -23,16 +22,19 @@ body {
     width: 18%; 
     background-color: #f5f5f5;
     height: 100vh;
+    padding-top: 58px;
 }
 .middle {
     margin-right: 1px;
     width: 60%;
+    padding-top: 40px;
 }
 .right {
     max-height: 85vh; 
     overflow-y: auto;
     background-color: #f5f5f5;
     width: 30%;
+    padding-top: 58px;
 }
 
 /* Mobile Sidebar */
@@ -64,17 +66,24 @@ body {
 /* Navbar Styling */
 .navbar {
     position: fixed; 
-    top: 0;
-    left: 0;
-    right: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 20px;
+    padding: 10px 60px;
     background-color: white;
     border-bottom: 1px solid #ddd;
-    height: 50px;
-    z-index: 1000; 
+    width: 100%;
+    box-sizing: border-box;
+}
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.navbar-logo img {
+    width: 40px;
+    height: 40px;
 }
 .search-container {
     position: relative;
@@ -109,20 +118,43 @@ body {
     cursor: pointer;
 }
 
-/* Logo Styling */
-.logo img {
-    height: 43px;
-}
 .logo {
     margin-right: 15px;
 }
-/* Search Bar Styling */
+
 .search-bar {
-    padding: 8px 100px 8px 10px;
+    display: flex;
+    align-items: center;
     border: 1px solid #ddd;
     border-radius: 5px;
-    width: 400px; 
-    width: 100%;
+    padding: 5px 10px;
+    background-color: white;
+}
+.search-bar input {
+    border: none;
+    outline: none;
+    padding: 5px;
+    width: 500px;
+}
+
+.search-bar span {
+    font-size: 12px;
+    margin-left: auto;
+    color: gray;
+}
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.navbar-right a {
+    text-decoration: none;
+    color: #3B49DF;
+    border: 1px solid #3B49DF;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
 }
 
 /* Nav Links Styling */
