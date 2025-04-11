@@ -176,3 +176,4 @@ def checkout():
         db.session.rollback()
         flash(f'Checkout failed: {str(e)}', 'danger')
         return redirect(url_for('events.view_cart'))
+    

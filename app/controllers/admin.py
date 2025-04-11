@@ -1,12 +1,13 @@
 # backend/app/controllers/admin.py
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash
-from app import db, app, allowed_file  # Import app here
+from app import db, app, allowed_file
 import os
 from werkzeug.utils import secure_filename
 from app.models.event import Event
 from app.models.user import User
 from app.models.cart import Cart
-from app.forms import AddEventForm, EditEventForm, DeleteEventForm
+from app.models.order import Order
+from app.forms import AddEventForm, EditEventForm, DeleteEventForm, DeleteUserForm
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -14,8 +15,8 @@ def admin_required():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
     user = User.query.get(session['user_id'])
-    if not user.is_admin:
-        flash('You must be an admin to access this page!')
+    if not user.is_admin:  # Assumes User model has is_admin attribute
+        flash('You must be an admin to access this page!', 'danger')
         return redirect(url_for('events.event_list'))
     return None
 
@@ -25,9 +26,23 @@ def dashboard():
     if check:
         return check
     
+    # Stats
+    total_events = Event.query.count()
+    total_users = User.query.count()
+    total_orders = Order.query.count()
+    recent_orders = Order.query.order_by(Order.order_date.desc()).limit(6).all()
+    
+    # Event list with delete form
     events = Event.query.all()
     form = DeleteEventForm()
-    return render_template('admin_dashboard.html', events=events, form=form)
+    
+    return render_template('admin_dashboard.html', 
+                         total_events=total_events, 
+                         total_users=total_users, 
+                         total_orders=total_orders, 
+                         recent_orders=recent_orders, 
+                         events=events, 
+                         form=form)
 
 @admin_bp.route('/add_event', methods=['GET', 'POST'])
 def add_event():
@@ -41,7 +56,7 @@ def add_event():
         image_filename = None
         if image_file and allowed_file(image_file.filename):
             image_filename = secure_filename(image_file.filename)
-            image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)  # Use app here
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
             image_file.save(image_path)
         
         event = Event(
@@ -53,7 +68,7 @@ def add_event():
         )
         db.session.add(event)
         db.session.commit()
-        flash('Event added successfully!')
+        flash('Event added successfully!', 'success')
         return redirect(url_for('admin.dashboard'))
     return render_template('add_event.html', form=form)
 
@@ -74,12 +89,12 @@ def edit_event(event_id):
         image_file = form.image.data
         if image_file and allowed_file(image_file.filename):
             image_filename = secure_filename(image_file.filename)
-            image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)  # Use app here
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
             image_file.save(image_path)
             event.image_url = image_filename
         
         db.session.commit()
-        flash('Event updated successfully!')
+        flash('Event updated successfully!', 'success')
         return redirect(url_for('admin.dashboard'))
     return render_template('edit_event.html', form=form, event=event)
 
@@ -94,11 +109,44 @@ def delete_event(event_id):
         event = Event.query.get_or_404(event_id)
         cart_items = Cart.query.filter_by(event_id=event_id).all()
         if cart_items:
-            flash('Cannot delete event: Tickets are present in one or more carts. Please remove them first.')
+            flash('Cannot delete event: Tickets are present in one or more carts. Please remove them first.', 'danger')
         else:
             db.session.delete(event)
             db.session.commit()
-            flash('Event deleted successfully!')
+            flash('Event deleted successfully!', 'success')
     else:
-        flash('Failed to delete event due to invalid request.')
+        flash('Failed to delete event due to invalid request.', 'danger')
     return redirect(url_for('admin.dashboard'))
+
+@admin_bp.route('/manage_users')
+def manage_users():
+    check = admin_required()
+    if check:
+        return check
+    users = User.query.all()
+    form = DeleteUserForm()  # Instantiate the form
+    return render_template('manage_users.html', users=users, form=form)
+
+
+@admin_bp.route('/delete_user/<int:user_id>', methods=['POST'])
+def delete_user(user_id):
+    check = admin_required()
+    if check:
+        return check
+    form = DeleteUserForm()
+    if form.validate_on_submit():
+        user = User.query.get_or_404(user_id)
+        if user.id == session['user_id']:  # Prevent self-deletion
+            flash('You cannot delete your own account!', 'danger')
+            return redirect(url_for('admin.manage_users'))
+        # Optional: Check for orders (though cascade should handle it)
+        order_count = Order.query.filter_by(user_id=user_id).count()
+        if order_count > 0:
+            flash('Cannot delete user: This user has associated orders.', 'danger')
+            return redirect(url_for('admin.manage_users'))
+        db.session.delete(user)
+        db.session.commit()
+        flash('User deleted successfully!', 'success')
+    else:
+        flash('Failed to delete user due to invalid request.', 'danger')
+    return redirect(url_for('admin.manage_users'))

@@ -47,3 +47,6 @@ class UpdateCartForm(FlaskForm):
 
 class DeleteEventForm(FlaskForm):
     submit = SubmitField('Delete')
+
+class DeleteUserForm(FlaskForm):
+    submit = SubmitField('Delete')
