@@ -1,4 +1,3 @@
-# backend/app/controllers/admin.py
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash
 from app import db, app, allowed_file
 import os
@@ -101,21 +100,21 @@ def edit_event(event_id):
 @admin_bp.route('/delete_event/<int:event_id>', methods=['POST'])
 def delete_event(event_id):
     check = admin_required()
-    if check:
-        return check
+    event = Event.query.get_or_404(event_id)
     
-    form = DeleteEventForm()
-    if form.validate_on_submit():
-        event = Event.query.get_or_404(event_id)
-        cart_items = Cart.query.filter_by(event_id=event_id).all()
-        if cart_items:
-            flash('Cannot delete event: Tickets are present in one or more carts. Please remove them first.', 'danger')
-        else:
-            db.session.delete(event)
-            db.session.commit()
-            flash('Event deleted successfully!', 'success')
-    else:
-        flash('Failed to delete event due to invalid request.', 'danger')
+    # Check if there are any orders linked to this event
+    if Order.query.filter_by(event_id=event.id).count() > 0:
+        flash("Can't delete the event. Because there are few orders with this event.", "warning")
+        return redirect(url_for('admin.dashboard'))  # Adjust to your actual redirect path
+
+    try:
+        db.session.delete(event)
+        db.session.commit()
+        flash("Event deleted successfully.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash("Something went wrong while deleting the event.", "danger")
+
     return redirect(url_for('admin.dashboard'))
 
 @admin_bp.route('/manage_users')
@@ -127,26 +126,18 @@ def manage_users():
     form = DeleteUserForm()  # Instantiate the form
     return render_template('manage_users.html', users=users, form=form)
 
-
 @admin_bp.route('/delete_user/<int:user_id>', methods=['POST'])
 def delete_user(user_id):
     check = admin_required()
     if check:
         return check
+    
     form = DeleteUserForm()
     if form.validate_on_submit():
         user = User.query.get_or_404(user_id)
         if user.id == session['user_id']:  # Prevent self-deletion
-            flash('You cannot delete your own account!', 'danger')
-            return redirect(url_for('admin.manage_users'))
-        # Optional: Check for orders (though cascade should handle it)
-        order_count = Order.query.filter_by(user_id=user_id).count()
-        if order_count > 0:
-            flash('Cannot delete user: This user has associated orders.', 'danger')
+            flash('you cant delete your own account.')
             return redirect(url_for('admin.manage_users'))
         db.session.delete(user)
         db.session.commit()
-        flash('User deleted successfully!', 'success')
-    else:
-        flash('Failed to delete user due to invalid request.', 'danger')
     return redirect(url_for('admin.manage_users'))

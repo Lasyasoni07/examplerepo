@@ -1,4 +1,3 @@
-# backend/app/forms.py
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed  # Import for file uploads
 from wtforms import StringField, PasswordField, SubmitField, FloatField, IntegerField, EmailField
@@ -38,12 +37,11 @@ class EditEventForm(AddEventForm):
     submit = SubmitField('Update Event')
 
 class BuyTicketForm(FlaskForm):
-    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=1)])
-    submit = SubmitField('Buy Ticket')
+    submit = SubmitField('Add to Cart')
 
 class UpdateCartForm(FlaskForm):
-    quantity = IntegerField('Quantity', validators=[DataRequired(), NumberRange(min=0)])
-    submit = SubmitField('Update')
+    quantity = IntegerField('Quantity', validators=[NumberRange(min=0)])
+    submit = SubmitField('Update Cart')
 
 class DeleteEventForm(FlaskForm):
     submit = SubmitField('Delete')

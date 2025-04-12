@@ -1,3 +1,4 @@
+# backend/app/controllers/events.py
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash
 from app import db
 from app.models.event import Event
@@ -14,7 +15,7 @@ def event_list():
         return redirect(url_for('auth.login'))
     
     events = Event.query.all()
-    form = BuyTicketForm()  # Create form instance
+    form = BuyTicketForm()  # Create form instance (now only contains submit)
     return render_template('events.html', events=events, form=form)
 
 @events_bp.route('/add_to_cart/<int:event_id>', methods=['POST'])
@@ -24,29 +25,28 @@ def add_to_cart(event_id):
     form = BuyTicketForm()
     if form.validate_on_submit():
         event = Event.query.get_or_404(event_id)
-        if form.quantity.data > event.tickets_available:
-            flash('Not enough tickets available.')
+        if event.tickets_available < 1:  # Check if at least 1 ticket is available
+            flash('No tickets available.')
             return redirect(url_for('events.event_list'))
         cart_item = Cart.query.filter_by(user_id=session['user_id'], event_id=event_id).first()
         if cart_item:
-            cart_item.quantity += form.quantity.data
+            if cart_item.quantity + 1 > event.tickets_available:
+                flash('Not enough tickets available to add more.')
+            else:
+                cart_item.quantity += 1  # Increment by 1
         else:
-            cart_item = Cart(user_id=session['user_id'], event_id=event_id, quantity=form.quantity.data)
+            cart_item = Cart(user_id=session['user_id'], event_id=event_id, quantity=1)  # Default to 1 ticket
             db.session.add(cart_item)
         db.session.commit()
         flash('Added to cart!')
     return redirect(url_for('events.event_list'))
 
-# backend/app/controllers/events.py
 @events_bp.route('/cart')
 def view_cart():
     if 'user_id' not in session:
         flash('Please log in to view your cart.')
         return redirect(url_for('auth.login'))
     cart_items = Cart.query.filter_by(user_id=session['user_id']).all()
-    print("Cart items:", [item.__dict__ for item in cart_items])  # Debug: Inspect raw Cart objects
-    for item in cart_items:
-        print("Item event:", item.event)  # Debug: Check if event relationship works
     form = UpdateCartForm()
     total = sum(item.event.price * item.quantity for item in cart_items)
     return render_template('cart.html', cart_items=cart_items, form=form, total=total)
@@ -137,7 +137,6 @@ def order_history():
         flash('Please log in to view your order history.', 'danger')
         return redirect(url_for('auth.login'))
     orders = Order.query.filter_by(user_id=session['user_id']).all()
-    print("Order history - Orders:", [order.__dict__ for order in orders])  # Debug
     return render_template('order_history.html', orders=orders)
 
 @events_bp.route('/checkout')
@@ -147,15 +146,14 @@ def checkout():
         return redirect(url_for('auth.login'))
     
     cart_items = Cart.query.filter_by(user_id=session['user_id']).all()
-    print("Checkout - Cart items:", [item.__dict__ for item in cart_items])  # Debug
     if not cart_items:
         flash('Your cart is empty.', 'danger')
         return redirect(url_for('events.view_cart'))
     
     try:
+        order_ids = []
         for item in cart_items:
-            event = Event.query.get(item.event_id)  # Direct query instead of item.event
-            print("Checkout - Event for item", item.id, ":", event)  # Debug
+            event = Event.query.get(item.event_id)
             if event.tickets_available < item.quantity:
                 flash(f'Not enough tickets for {event.name}.', 'danger')
                 return redirect(url_for('events.view_cart'))
@@ -168,12 +166,23 @@ def checkout():
                 total_amount=total_amount
             )
             db.session.add(order)
+            db.session.flush()  # Ensure order ID is available
+            order_ids.append(order.id)
             db.session.delete(item)
         db.session.commit()
         flash('Order placed successfully!', 'success')
-        return redirect(url_for('events.order_history'))
+        return redirect(url_for('events.order_success', order_ids=','.join(map(str, order_ids))))
     except Exception as e:
         db.session.rollback()
         flash(f'Checkout failed: {str(e)}', 'danger')
         return redirect(url_for('events.view_cart'))
-    
+
+@events_bp.route('/order_success')
+def order_success():
+    if 'user_id' not in session:
+        flash('Please log in to view your order.', 'danger')
+        return redirect(url_for('auth.login'))
+    order_ids = request.args.get('order_ids', '').split(',')
+    order_ids = [int(id) for id in order_ids if id.isdigit()]
+    orders = Order.query.filter(Order.id.in_(order_ids), Order.user_id == session['user_id']).all()
+    return render_template('order_success.html', orders=orders)

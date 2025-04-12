@@ -1,4 +1,3 @@
-# backend/app/models/event.py
 from app import db
 
 class Event(db.Model):
@@ -11,4 +10,3 @@ class Event(db.Model):
 
     def __repr__(self):
         return f'<Event {self.name}>'
-    

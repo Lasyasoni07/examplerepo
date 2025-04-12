@@ -1,9 +1,9 @@
-# backend/run.py
 from app import app, db
 from app.models.event import Event
 from app.models.user import User
 
 with app.app_context():
+    db.create_all()  # Ensures all tables (including Session) are created
     if not Event.query.first():
         events = [
             Event(name="Concert", date="2025-05-01", price=20.0, tickets_available=100, image_url="concert.jpg"),

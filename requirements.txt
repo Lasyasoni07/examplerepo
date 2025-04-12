@@ -6,3 +6,4 @@ flask-wtf
 email_validator
 flask-bcrypt
 flask-jwt-extended
+flask-session

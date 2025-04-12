@@ -17,6 +17,10 @@ def get_serializer():
 def home():
     return render_template('base.html')
 
+@auth_bp.route('/home')
+def homePage():
+    return render_template('home.html')
+
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignupForm()
@@ -41,7 +45,6 @@ def signup():
         return redirect(url_for('auth.login'))
     return render_template('signup.html', form=form)
 
-# backend/app/controllers/auth.py (example)
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -58,7 +61,7 @@ def login():
 
 @auth_bp.route('/logout')
 def logout():
-    session.pop('user_id', None)
+    session.pop('user_id', None)  # Flask-Session will handle cleanup
     flash('Logged out successfully!')
     return redirect(url_for('auth.login'))
 
@@ -76,12 +79,13 @@ def forgot_password():
 
             msg = Message('Password Reset Request', recipients=[email])
             msg.body = f'Click this link to reset your password: {reset_url}\nThis link expires in 1 hour.'
-            mail.send(msg)
 
+            mail.send(msg)
             flash('A password reset link has been sent to your email.')
         else:
             flash('Email not found!')
         return redirect(url_for('auth.login'))
+
     return render_template('forgot_password.html', form=form)
 
 @auth_bp.route('/reset_password/<token>', methods=['GET', 'POST'])
@@ -104,4 +108,4 @@ def reset_password(token):
         else:
             flash('Something went wrong.')
             return redirect(url_for('auth.login'))
-    return render_template('reset_password.html', form=form, token=token)   
+    return render_template('reset_password.html', form=form, token=token)
