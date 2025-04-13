@@ -15,7 +15,7 @@ def get_serializer():
 
 @auth_bp.route('/')
 def home():
-    return render_template('base.html')
+    return render_template('home.html')
 
 @auth_bp.route('/home')
 def homePage():
@@ -28,21 +28,35 @@ def signup():
         username = form.username.data
         email = form.email.data
         password = form.password.data
+        confirm_password = form.confirm_password.data
 
+        # Check for existing username or email
         if User.query.filter_by(username=username).first():
-            flash('Username already taken!')
+            flash('Username already taken!', 'danger')
             return render_template('signup.html', form=form)
         if User.query.filter_by(email=email).first():
-            flash('Email already registered!')
+            flash('Email already registered!', 'danger')
             return render_template('signup.html', form=form)
 
+        if password != confirm_password:
+            flash('Passwords do not match.', 'danger')
+            return render_template('signup.html', form=form)
+
+        # Create user
         new_user = User(username=username, email=email)
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
 
-        flash('Signup successful! Please log in.')
+        flash('Signup successful! Please log in.', 'success')
         return redirect(url_for('auth.login'))
+    
+    # Flash any form validation errors
+    if form.errors:
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f"{field.capitalize()}: {error}", 'danger')
+
     return render_template('signup.html', form=form)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])

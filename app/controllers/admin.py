@@ -61,6 +61,8 @@ def add_event():
         event = Event(
             name=form.name.data,
             date=form.date.data,
+            time=form.time.data,
+            location=form.location.data,
             price=form.price.data,
             tickets_available=form.tickets_available.data,
             image_url=image_filename
