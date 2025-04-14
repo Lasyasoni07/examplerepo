@@ -6,7 +6,8 @@ from app.models.event import Event
 from app.models.user import User
 from app.models.cart import Cart
 from app.models.order import Order
-from app.forms import AddEventForm, EditEventForm, DeleteEventForm, DeleteUserForm
+from app.models.contact_query import ContactQuery
+from app.forms import AddEventForm, EditEventForm, DeleteEventForm, DeleteUserForm, DeleteOrderForm
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -143,3 +144,41 @@ def delete_user(user_id):
         db.session.delete(user)
         db.session.commit()
     return redirect(url_for('admin.manage_users'))
+
+@admin_bp.route('/manage_orders')
+def manage_orders():
+    check = admin_required()
+    if check:
+        return check
+    orders = Order.query.all()
+    form = DeleteOrderForm()  # Instantiate the form
+    return render_template('manage_orders.html', orders=orders, form=form)
+
+@admin_bp.route('/delete_order/<int:order_id>', methods=['POST'])
+def delete_order(order_id):
+    check = admin_required()
+    if check:
+        return check
+    
+    form = DeleteOrderForm()
+    if form.validate_on_submit():
+        order = Order.query.get_or_404(order_id)
+        try:
+            # Update event tickets_available
+            if order.event:
+                order.event.tickets_available += order.quantity
+            db.session.delete(order)
+            db.session.commit()
+            flash('Order deleted successfully.', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash('Something went wrong while deleting the order.', 'danger')
+    return redirect(url_for('admin.manage_orders'))
+
+@admin_bp.route('/manage_queries')
+def manage_queries():
+    check = admin_required()
+    if check:
+        return check
+    queries = ContactQuery.query.order_by(ContactQuery.submitted_at.desc()).all()
+    return render_template('manage_queries.html', queries=queries)

@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed  # Import for file uploads
-from wtforms import StringField, PasswordField, SubmitField, FloatField, IntegerField, EmailField, DateField, TimeField
+from flask_wtf.file import FileField, FileAllowed
+from wtforms import StringField, PasswordField, SubmitField, FloatField, IntegerField, EmailField, DateField, TimeField, TextAreaField
 from wtforms.validators import DataRequired, EqualTo, Length, Email, NumberRange, ValidationError
-from app import app  # Import app for ALLOWED_EXTENSIONS
 import re
 
 class LoginForm(FlaskForm):
@@ -49,11 +48,11 @@ class AddEventForm(FlaskForm):
     location = StringField('Location', validators=[DataRequired()])
     price = FloatField('Price', validators=[DataRequired()])
     tickets_available = IntegerField('Tickets Available', validators=[DataRequired()])
-    image = FileField('Image')
+    image = FileField('Image', validators=[FileAllowed(['png', 'jpg', 'jpeg', 'gif'], 'Images only!')])
     submit = SubmitField('Add Event')
 
 class EditEventForm(AddEventForm):
-    image = FileField('Event Image (optional)', validators=[FileAllowed(app.config['ALLOWED_EXTENSIONS'], 'Images only!')])  # Optional for edit
+    image = FileField('Event Image (optional)', validators=[FileAllowed(['png', 'jpg', 'jpeg', 'gif'], 'Images only!')])
     submit = SubmitField('Update Event')
 
 class BuyTicketForm(FlaskForm):
@@ -68,3 +67,12 @@ class DeleteEventForm(FlaskForm):
 
 class DeleteUserForm(FlaskForm):
     submit = SubmitField('Delete')
+
+class DeleteOrderForm(FlaskForm):
+    submit = SubmitField('Delete')
+
+class ContactForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=80)])
+    email = StringField('Email', validators=[DataRequired(), Email(), Length(max=120)])
+    message = TextAreaField('Message', validators=[DataRequired(), Length(min=10, max=1000)])
+    submit = SubmitField('Submit Query')

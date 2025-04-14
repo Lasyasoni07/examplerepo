@@ -7,3 +7,7 @@ email_validator
 flask-bcrypt
 flask-jwt-extended
 flask-session
+authlib
+requests
+python-dotenv
+flask-migrate
