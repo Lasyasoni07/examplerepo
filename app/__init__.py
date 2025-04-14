@@ -4,7 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail
-from flask_jwt_extended import JWTManager
 from flask_wtf.csrf import CSRFProtect
 from flask_session import Session
 from flask_login import LoginManager
@@ -22,7 +21,6 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 mail = Mail(app)
-jwt = JWTManager(app)
 csrf = CSRFProtect(app)
 migrate = Migrate(app, db)
 
