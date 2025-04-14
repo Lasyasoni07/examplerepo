@@ -41,6 +41,13 @@ class ResetPasswordForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
     submit = SubmitField('Reset Password')
 
+    def validate_password(self, field):
+        password = field.data
+        if not re.search(r'\d', password):
+            raise ValidationError('Password must contain at least one number.')
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+            raise ValidationError('Password must contain at least one special character.')
+
 class AddEventForm(FlaskForm):
     name = StringField('Event Name', validators=[DataRequired()])
     date = DateField('Date', format='%Y-%m-%d', validators=[DataRequired()])

@@ -1,10 +1,10 @@
 from app import app, db
 from app.models.event import Event
 from app.models.user import User
-from datetime import datetime  # ✅ Import this
+from datetime import datetime 
 
 with app.app_context():
-    db.create_all()  # Ensures all tables (including Session) are created
+    db.create_all()
     if not Event.query.first():
         events = [
             Event(

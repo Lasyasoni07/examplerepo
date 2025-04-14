@@ -1,4 +1,3 @@
-# backend/app/models/session.py
 from app import db
 
 class Session(db.Model):

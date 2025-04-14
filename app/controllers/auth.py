@@ -172,5 +172,5 @@ def contact():
         except Exception as e:
             db.session.rollback()
             flash('Something went wrong. Please try again.', 'danger')
-        return redirect(url_for('auth.contact'))  # Fixed endpoint
+        return redirect(url_for('auth.contact')) 
     return render_template('contact.html', form=form)

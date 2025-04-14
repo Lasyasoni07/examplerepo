@@ -8,7 +8,7 @@ class Order(db.Model):
     total_amount = db.Column(db.Float, nullable=False)
     order_date = db.Column(db.DateTime, server_default=db.func.now())
 
-    user = db.relationship('User', back_populates='orders')  # Clean, no overlaps needed
+    user = db.relationship('User', back_populates='orders') 
     event = db.relationship('Event', backref=db.backref('event_orders', lazy=True))
 
     def __repr__(self):

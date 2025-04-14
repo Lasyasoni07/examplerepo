@@ -15,7 +15,7 @@ def admin_required():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
     user = User.query.get(session['user_id'])
-    if not user.is_admin:  # Assumes User model has is_admin attribute
+    if not user.is_admin: 
         flash('You must be an admin to access this page!', 'danger')
         return redirect(url_for('events.event_list'))
     return None
@@ -26,13 +26,11 @@ def dashboard():
     if check:
         return check
     
-    # Stats
     total_events = Event.query.count()
     total_users = User.query.count()
     total_orders = Order.query.count()
     recent_orders = Order.query.order_by(Order.order_date.desc()).limit(6).all()
     
-    # Event list with delete form
     events = Event.query.all()
     form = DeleteEventForm()
     
@@ -105,10 +103,9 @@ def delete_event(event_id):
     check = admin_required()
     event = Event.query.get_or_404(event_id)
     
-    # Check if there are any orders linked to this event
     if Order.query.filter_by(event_id=event.id).count() > 0:
         flash("Can't delete the event. Because there are few orders with this event.", "warning")
-        return redirect(url_for('admin.dashboard'))  # Adjust to your actual redirect path
+        return redirect(url_for('admin.dashboard')) 
 
     try:
         db.session.delete(event)
@@ -126,7 +123,7 @@ def manage_users():
     if check:
         return check
     users = User.query.all()
-    form = DeleteUserForm()  # Instantiate the form
+    form = DeleteUserForm() 
     return render_template('manage_users.html', users=users, form=form)
 
 @admin_bp.route('/delete_user/<int:user_id>', methods=['POST'])
@@ -138,7 +135,7 @@ def delete_user(user_id):
     form = DeleteUserForm()
     if form.validate_on_submit():
         user = User.query.get_or_404(user_id)
-        if user.id == session['user_id']:  # Prevent self-deletion
+        if user.id == session['user_id']:  
             flash('you cant delete your own account.')
             return redirect(url_for('admin.manage_users'))
         db.session.delete(user)
@@ -151,7 +148,7 @@ def manage_orders():
     if check:
         return check
     orders = Order.query.all()
-    form = DeleteOrderForm()  # Instantiate the form
+    form = DeleteOrderForm()  
     return render_template('manage_orders.html', orders=orders, form=form)
 
 @admin_bp.route('/delete_order/<int:order_id>', methods=['POST'])
@@ -164,7 +161,6 @@ def delete_order(order_id):
     if form.validate_on_submit():
         order = Order.query.get_or_404(order_id)
         try:
-            # Update event tickets_available
             if order.event:
                 order.event.tickets_available += order.quantity
             db.session.delete(order)

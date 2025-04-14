@@ -15,7 +15,7 @@ def event_list():
         return redirect(url_for('auth.login'))
     
     events = Event.query.all()
-    form = BuyTicketForm()  # Create form instance (now only contains submit)
+    form = BuyTicketForm()
     return render_template('events.html', events=events, form=form)
 
 @events_bp.route('/add_to_cart/<int:event_id>', methods=['POST'])
@@ -25,7 +25,7 @@ def add_to_cart(event_id):
     form = BuyTicketForm()
     if form.validate_on_submit():
         event = Event.query.get_or_404(event_id)
-        if event.tickets_available < 1:  # Check if at least 1 ticket is available
+        if event.tickets_available < 1: 
             flash('No tickets available.')
             return redirect(url_for('events.event_list'))
         cart_item = Cart.query.filter_by(user_id=session['user_id'], event_id=event_id).first()
@@ -33,9 +33,9 @@ def add_to_cart(event_id):
             if cart_item.quantity + 1 > event.tickets_available:
                 flash('Not enough tickets available to add more.')
             else:
-                cart_item.quantity += 1  # Increment by 1
+                cart_item.quantity += 1 
         else:
-            cart_item = Cart(user_id=session['user_id'], event_id=event_id, quantity=1)  # Default to 1 ticket
+            cart_item = Cart(user_id=session['user_id'], event_id=event_id, quantity=1) 
             db.session.add(cart_item)
         db.session.commit()
         flash('Added to cart!')
@@ -166,7 +166,7 @@ def checkout():
                 total_amount=total_amount
             )
             db.session.add(order)
-            db.session.flush()  # Ensure order ID is available
+            db.session.flush()
             order_ids.append(order.id)
             db.session.delete(item)
         db.session.commit()

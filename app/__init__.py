@@ -14,21 +14,17 @@ app = Flask(__name__,
             static_folder=os.path.abspath('../frontend/static'), 
             template_folder=os.path.abspath('../frontend/templates'))
 
-# Load configurations
 app.config.from_object(Config)
 
-# Initialize extensions
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 mail = Mail(app)
 csrf = CSRFProtect(app)
 migrate = Migrate(app, db)
 
-# Flask-Session setup
 app.config['SESSION_SQLALCHEMY'] = db
 sess = Session(app)
 
-# OAuth for Google
 oauth = OAuth(app)
 oauth.register(
     name='google',
@@ -38,7 +34,6 @@ oauth.register(
     client_kwargs={'scope': 'openid email profile'}
 )
 
-# Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'auth.login'
@@ -51,7 +46,6 @@ def load_user(user_id):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
-# Ensure upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
@@ -63,14 +57,12 @@ def inject_user():
         return {'current_user': user}
     return {'current_user': None}
 
-# Import models for migrations
 from app.models.user import User
 from app.models.event import Event
 from app.models.cart import Cart
 from app.models.order import Order
 from app.models.contact_query import ContactQuery
 
-# Register blueprints
 from app.controllers import auth, events, admin
 app.register_blueprint(auth.auth_bp, url_prefix='/')
 app.register_blueprint(events.events_bp)
